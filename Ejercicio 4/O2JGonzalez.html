@@ -1,0 +1,104 @@
+<html>
+    <head>
+
+        <title>Ejercicio 4</title>
+
+    </head>
+
+    <body onload="">
+
+        <input type="text" id="inputContent" >
+        <span id="texto"><span>
+
+            <script type="module">
+    
+
+                //librerias
+                import {fromEvent} from 'https://dev.jspm.io/rxjs@6/_esm2015'
+                import {map , filter } from 'https://dev.jspm.io/rxjs@6/_esm2015/operators'
+                
+                //elemeto input
+                const input = document.getElementById('inputContent')
+                const texto = document.getElementById('texto')
+                
+                //observable evento  
+                const observable = fromEvent(input,'keyup')
+
+                //Creacion de un string vacio
+                let mirrorText='';
+                let normalText='';
+
+               
+
+                //observador
+                const observador = {   
+                }
+
+                 //Funcion clear
+                 let Clear = _ => {
+                    //Blanquear contenido del span
+                    texto.textContent = '';
+                    //Desabilitar input
+                    input.disabled = true;
+                    //Blanquear contenido del input
+                    input.value =''
+                }
+
+                 //subscripcion
+                 const subscription =  observable.pipe( 
+                        //No tomar letras especiales
+                        filter(event => {
+                                if( (event.which <= 90 && event.which >=48) || (event.which === 32) ){
+                                return event
+                                }
+                            } 
+                        ),
+                         map(   event =>{
+
+                            return event.key
+
+                            } 
+                        )
+                     ).subscribe(
+                    //SI OCURRE UN EVENTO
+                    key => {
+
+                        mirrorText += key
+                        normalText += key
+                        texto.textContent=mirrorText.split('').reverse().join('')
+                        console.log(normalText) 
+
+                        if (normalText === 'complete'){                                                
+                            subscription.complete()
+                            }
+
+                        if (normalText === 'error'){                                                
+                            subscription.error('Bug')
+                            }   
+
+                        },
+                    //SI OCURRE UN ERROR
+                    err => {
+                        console.log(`Razon de error: ${err}`)
+                        },
+                    _ => {
+                        console.log('Completado')    
+                        }            
+                    )
+
+
+                //Al pasar 30 segundos se realiza la desuscripcion
+                setTimeout(_ => {
+                    subscription.unsubscribe()                    
+                    //Limpiamos
+                    Clear()
+                },30000) 
+                              
+                
+            </script>
+
+    </body>
+
+    
+
+</html>

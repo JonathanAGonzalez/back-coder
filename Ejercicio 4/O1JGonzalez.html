@@ -1,0 +1,82 @@
+<html>
+    <head>
+
+        <title>Ejercicio 4</title>
+
+    </head>
+
+    <body onload="">
+
+        <input type="text" id="inputContent" >
+        <span id="texto"><span>
+
+            <script type="module">
+
+               
+                import {fromEvent} from 'https://dev.jspm.io/rxjs@6/_esm2015'
+                
+                //ele input
+                const input = document.getElementById('inputContent')
+                const texto = document.getElementById('texto')
+                
+                //observable evento  
+                const observable = fromEvent(input,'keyup')
+
+                //string vacio
+                let mirrorText='';
+                let normalText='';
+
+               
+
+                // observador
+                const observador = {
+                    //EVENTO
+                    next: event => {
+
+                        mirrorText += event.key
+                        normalText += event.key
+                        texto.textContent=mirrorText.split('').reverse().join('')
+                        
+
+                        if (normalText === 'complete'){                                                
+                            subscription.complete()
+                        }
+
+                        if (normalText === 'error'){                                                
+                            subscription.error('Bug')
+                        }
+
+                    },
+                    //ERROR
+                    error: err => {
+                        console.log(`Razon de error: ${err}`)
+                    },
+                    complete:_ => {
+                        console.log('Completado')    
+                    }               
+                }
+
+                 //Funcion clear
+                 let Clear = _ => {
+                    
+                    texto.textContent = '';
+                  
+                    input.disabled = true;
+                    input.value =''
+                }
+
+                 //subscripcion
+                 const subscription =  observable.subscribe(observador)
+                setTimeout(_ => {
+                    subscription.unsubscribe()         
+                    Clear()
+                },30000) 
+                              
+                
+            </script>
+
+    </body>
+
+    
+
+</html>
